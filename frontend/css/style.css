@@ -1,0 +1,30 @@
+/* Custom styles that complement Tailwind */
+
+/* Smooth tab transition */
+.tab-btn {
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Input focus ring fix for older browsers */
+input:focus,
+select:focus {
+  outline: none;
+}
+
+/* Password toggle button */
+.eye-icon {
+  pointer-events: none;
+}
+
+/* Alert states */
+.alert-success {
+  background-color: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.alert-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
