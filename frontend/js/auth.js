@@ -98,8 +98,17 @@ function formatErrors(data) {
 function redirectToDashboard(user) {
   // Store user info for the next page
   localStorage.setItem('user', JSON.stringify(user));
-  // Redirect – the dashboard page will be added in a future sprint
-  window.location.href = user.role === 'employer' ? 'employer.html' : 'worker.html';
+  // Show the welcome panel (dashboard pages land in a future sprint)
+  showWelcome(user);
+}
+
+function showWelcome(user) {
+  document.getElementById('auth-panel').classList.add('hidden');
+  const panel = document.getElementById('welcome-panel');
+  panel.classList.remove('hidden');
+  document.getElementById('welcome-name').textContent = user.username || user.email || 'User';
+  document.getElementById('welcome-role').textContent =
+    user.role === 'employer' ? 'Employer' : 'Worker';
 }
 
 /* ── Login handler ──────────────────────────────────────── */
@@ -168,6 +177,15 @@ document.getElementById('form-register').addEventListener('submit', async (e) =>
     showAlert(formatErrors(data));
   }
 });
+
+/* ── Logout ─────────────────────────────────────────────── */
+
+function logout() {
+  Auth.clearTokens();
+  document.getElementById('welcome-panel').classList.add('hidden');
+  document.getElementById('auth-panel').classList.remove('hidden');
+  hideAlert();
+}
 
 /* ── Auto-redirect if already logged in ─────────────────── */
 

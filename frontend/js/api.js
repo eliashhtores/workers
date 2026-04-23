@@ -31,6 +31,26 @@ async function apiRequest(endpoint, method = 'GET', body = null, auth = false) {
     } catch {
       data = null;
     }
+
+    // Auto-refresh: if the access token expired, try once with a new token
+    if (!response.ok && response.status === 401 && auth) {
+      const refreshed = await Auth.refreshToken();
+      if (refreshed?.ok) {
+        Auth.saveTokens(refreshed.data.access, refreshed.data.refresh);
+        headers['Authorization'] = `Bearer ${refreshed.data.access}`;
+        const retry = await fetch(`${API_BASE}${endpoint}`, { method, headers, body: body ? JSON.stringify(body) : undefined });
+        let retryData;
+        try {
+          retryData = await retry.json();
+        } catch {
+          retryData = null;
+        }
+        return { ok: retry.ok, status: retry.status, data: retryData };
+      }
+      // Refresh failed — clear stale tokens and let the caller handle 401
+      Auth.clearTokens();
+    }
+
     return { ok: response.ok, status: response.status, data };
   } catch (err) {
     return { ok: false, status: 0, data: { detail: 'Network error. Please try again.' } };
